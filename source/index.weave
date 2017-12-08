@@ -51,7 +51,7 @@ center_page "pics", "みゅみゅ | 画像集" do
 		img = ::Magick::Image::read(x).first
 		thumb = img.resize_to_fill(64, 64)
 		thumb.write x.sub(/\/pics\//,"/thumbs/")
-		x
+		"/" + x
 	end
 
 	thumbs = images.map do |x|
