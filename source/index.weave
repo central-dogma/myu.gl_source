@@ -135,6 +135,9 @@ center_page "game", "みゅみゅ | ゲーム" do
 		a "ブログ", href: "/blog"
 	end
 
+	h5 "Click on the buttons to win!"
+	h5 "ボタンをクリックする人は勝ち！！"
+
 	canvas "アレ...? ゲームはここにあるはず。ブラウザーは古いの？", 
 		id: "game_canvas", 
 		width: 320,
