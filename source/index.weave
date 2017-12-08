@@ -135,6 +135,17 @@ center_page "game", "みゅみゅ | ゲーム" do
 		a "ブログ", href: "/blog"
 	end
 
+	canvas "アレ...? ゲームはここにあるはず。ブラウザーは古いの？", 
+		id: "game_canvas", 
+		width: 320,
+		height: 500
+
+	request_js "js/game.js"
+
+	on_page_load <<-SCRIPT
+		start_game( document.getElementById("game_canvas") )
+	SCRIPT
+
 end
 
 center_page "kokoro", "みゅみゅ | ハッキングっ" do
@@ -158,7 +169,6 @@ center_page "kokoro", "みゅみゅ | ハッキングっ" do
 	request_css "css/xterm.css"
 	request_js "js/xterm.js"
 	request_js "js/term.js"
-	request_js "js/chalk.js"
 
 	on_page_load <<-SCRIPT
 		var term = new Terminal({
