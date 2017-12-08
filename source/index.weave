@@ -143,6 +143,11 @@ center_page "game", "みゅみゅ | ゲーム" do
 		width: 320,
 		height: 500
 
+	hr
+
+	br 
+	br
+
 	request_js "js/game.js"
 
 	on_page_load <<-SCRIPT
