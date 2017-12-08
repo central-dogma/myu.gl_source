@@ -18,6 +18,14 @@ center_page "みゅみゅ" do
 
 	image "myu.png"
 
+	p "これは岡本未夕へのファンサイトです。公式のウェブサイトとは関係のないところです。"
+
+	hyperlink "https://twitter.com/astrobunny", "Created by @astrobunny"
+
+	br 
+
+	hr
+
 	on_page_load <<-SCRIPT
 
 		console.log("にゃ！")
