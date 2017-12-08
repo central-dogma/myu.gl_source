@@ -1,0 +1,171 @@
+require 'RMagick'
+
+center_page "みゅみゅ" do
+
+	h2 "お帰りなさいませご主人サマ♡"
+
+	h3 do
+		a "画像集", href: "/pics"
+		text " | "
+		a "ブログ", href: "/blog"
+		text " | "
+		a "ゲーム", href: "/game"
+	end
+
+	["orange", "purple", "yellow", "red", "blue", "green", "lightblue"].each do |c|
+		span "◎ ", style: "color: #{c};"
+	end
+
+	image "myu.png"
+
+	on_page_load <<-SCRIPT
+
+		console.log("にゃ！")
+		console.log("")
+		console.log("")
+		console.log("あなたのハートをハッキングっ！")
+
+	SCRIPT
+
+end
+
+center_page "pics", "みゅみゅ | 画像集" do
+
+	h2 "画像集"
+
+	h3 do
+		a "トップ", href: "/"
+		text " | "
+		a "ブログ", href: "/blog"
+		text " | "
+		a "ゲーム", href: "/game"
+	end
+
+	Dir['images/pics/*.jpg'].sort_by{|x| x.sub("images/pics/", "").to_i}.each_with_index do |x, i|
+		File.rename(x, "images/pics/#{i}.jpg")
+	end
+
+	br
+
+	images = Dir['images/pics/*.jpg'].map do |x|
+		img = ::Magick::Image::read(x).first
+		thumb = img.resize_to_fill(64, 64)
+		thumb.write x.sub(/\/pics\//,"/thumbs/")
+		x
+	end
+
+	thumbs = images.map do |x|
+		x.sub(/\/pics\//,"/thumbs/")
+	end
+
+	div style: "position: absolute;" do
+		gallery(images, thumbs)
+	end
+
+	on_page_load <<-SCRIPT
+
+		// Move the viewer to the body so everyone can see Myu in all her glory
+		var viewer = $('#blueimp-gallery').remove();
+		viewer.appendTo('body');
+		console.log("準備だきました！")
+
+	SCRIPT
+
+end
+
+center_page "blog", "みゅみゅ | ブログ" do
+	
+	h2 "ブログ"
+
+	h3 do
+		a "トップ", href: "/"
+		text " | "
+		a "画像集", href: "/pics"
+		text " | "
+		a "ゲーム", href: "/game"
+	end
+
+	br
+
+	ibox do
+		title do
+			text "みゅちゃん可愛い"
+			h6 "2017/12/8", class: "pull-right"
+		end
+		p "みゅは天使です。"
+	end
+
+	ibox do
+		title do
+			text "美優と生で会いました"
+			h6 "2017/12/2", class: "pull-right"
+		end
+		p "今日のお渡し会で美優と会いました。"
+		p "マジ天使。"
+		p "やばい。でそう"
+	end
+
+	ibox do
+		title do
+			text "7senses"
+			h6 "2017/11/30", class: "pull-right"
+		end
+		p "なんだ、ただの神曲か"
+	end
+
+end
+
+center_page "game", "みゅみゅ | ゲーム" do
+	
+	h2 "ゲーム"
+
+	h3 do
+		a "トップ", href: "/"
+		text " | "
+		a "画像集", href: "/pics"
+		text " | "
+		a "ブログ", href: "/blog"
+	end
+
+end
+
+center_page "kokoro", "みゅみゅ | ハッキングっ" do
+	
+	h2 "心のターミナル"
+
+	h3 do
+		a "トップ", href: "/"
+		text " | "
+		a "画像集", href: "/pics"
+		text " | "
+		a "ブログ", href: "/blog"
+		text " | "
+		a "ゲーム", href: "/game"
+	end
+
+	br
+
+	div "", id: "terminal", style: 'text-align: left; font-family: monospace, Console, Console, monotype; background: #000; padding: 10px;'
+
+	request_css "css/xterm.css"
+	request_js "js/xterm.js"
+	request_js "js/term.js"
+	request_js "js/chalk.js"
+
+	on_page_load <<-SCRIPT
+		var term = new Terminal({
+			cols: 80,
+			rows: 24,
+			focus: true,
+			screenKeys: true
+		});
+
+		term.open(document.getElementById("terminal"));
+
+		term.writeln('\u001b[38;5;214mMyuOS ver. 0.1a\033[0m');
+
+		begin_terminal(term);
+	SCRIPT
+
+end
+
