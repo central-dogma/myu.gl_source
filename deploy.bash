@@ -2,7 +2,7 @@
 git config --global user.email "davidsiaw@gmail.com"
 git config --global user.name "David Siaw (via Circle CI)"
 
-git clone git@github.com:central-dogma/myu.gl_source.git build
+git clone git@github.com:central-dogma/myu.gl.git build
 cp -r build/.git ./gittemp
 bundle exec weaver build
 cp -r ./gittemp build/.git
