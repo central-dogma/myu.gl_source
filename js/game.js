@@ -36,10 +36,16 @@ var game_state = {
 var styles = {
   green: ["lightgreen", "green", "green"],
   green_clicked: ["darkgreen", "green", "green"],
+
   red: ["pink", "red", "red"],
   red_clicked: ["darkred", "red", "red"],
+
   blue: ["lightblue", "blue", "blue"],
   blue_clicked: ["darkblue", "blue", "blue"],
+
+  white: ["white", "lightgray", "lightgray"],
+  white_clicked: ["gray", "lightgray", "lightgray"],
+
   fluorescent: ["magenta", "blue", "red"],
   fluorescent_clicked: ["red", "blue", "magenta"]
 }
@@ -47,12 +53,20 @@ var styles = {
 var levels = [
   function level0() {
     game_state.board_state[0][0] = "green"
+
   },
 
   function level1() {
     game_state.board_state[0][0] = "red"
     game_state.board_state[0][1] = "blue"
-  }
+  },
+
+  function level2() {
+    game_state.board_state[0][0] = "blue"
+    game_state.board_state[0][1] = "blue"
+    game_state.board_state[0][2] = "blue"
+  },
+
 ]
 
 function start_game(canvas)
@@ -81,21 +95,34 @@ function enter_board_state()
 {
   game_state.name = "board"
   game_state.click_listener = function() {
-    game_state.board_clicked_state[game_state.clicked.gy][game_state.clicked.gx] = 1
 
-    if (game_state.board_state[game_state.clicked.gy][game_state.clicked.gx] != 0)
+    if (game_state.clicked_place.x > 100 && game_state.clicked_place.x < 220 && 
+      game_state.clicked_place.y > 465 && game_state.clicked_place.y < 495)
     {
-      game_state.clicked_list.push({gx: game_state.clicked.gx, gy: game_state.clicked.gy})
+      enter_start_level_state();
+      return;
     }
 
-    if (game_state.board_state[game_state.clicked.gy][game_state.clicked.gx] === "green")
+    if (game_state.clicked.gx >= 0 && game_state.clicked.gx <= 4 &&
+      game_state.clicked.gy >= 0 && game_state.clicked.gy <= 5)
     {
-      enter_level_clear_state();
+      game_state.board_clicked_state[game_state.clicked.gy][game_state.clicked.gx] = 1
+
+      if (game_state.board_state[game_state.clicked.gy][game_state.clicked.gx] != 0)
+      {
+        game_state.clicked_list.push({gx: game_state.clicked.gx, gy: game_state.clicked.gy})
+      }
+
+      if (game_state.board_state[game_state.clicked.gy][game_state.clicked.gx] === "green")
+      {
+        enter_level_clear_state();
+      }
+      else
+      {
+        enter_board_clicked_state();
+      }
     }
-    else
-    {
-      enter_board_clicked_state();
-    }
+
   }
 }
 
@@ -114,14 +141,35 @@ function enter_board_combining_state()
   game_state.name = "board_combining"
   game_state.click_listener = function() {}
 
-  // resolve colors
-  var btn1 = game_state.board_state[game_state.clicked_list[0].gy][game_state.clicked_list[0].gx]
-  var btn2 = game_state.board_state[game_state.clicked_list[1].gy][game_state.clicked_list[1].gx]
-
-  if (btn1 == "red" && btn2 == "blue" || btn1 == "blue" && btn2 == "red")
+  if ( game_state.clicked_list[0].gx == game_state.clicked_list[1].gx &&
+        game_state.clicked_list[0].gy == game_state.clicked_list[1].gy
+   )
   {
-    game_state.board_state[game_state.clicked_list[0].gy][game_state.clicked_list[0].gx] = 0
-    game_state.board_state[game_state.clicked_list[1].gy][game_state.clicked_list[1].gx] = "green"
+    // :same:
+  }
+  else
+  {
+    // resolve colors
+    var btn1 = game_state.board_state[game_state.clicked_list[0].gy][game_state.clicked_list[0].gx]
+    var btn2 = game_state.board_state[game_state.clicked_list[1].gy][game_state.clicked_list[1].gx]
+
+    if (btn1 == "red" && btn2 == "blue" || btn1 == "blue" && btn2 == "red")
+    {
+      game_state.board_state[game_state.clicked_list[0].gy][game_state.clicked_list[0].gx] = 0
+      game_state.board_state[game_state.clicked_list[1].gy][game_state.clicked_list[1].gx] = "green"
+    }
+
+    if (btn1 == "blue" && btn2 == "blue")
+    {
+      game_state.board_state[game_state.clicked_list[0].gy][game_state.clicked_list[0].gx] = 0
+      game_state.board_state[game_state.clicked_list[1].gy][game_state.clicked_list[1].gx] = "red"
+    }
+
+    if (btn1 == "red" && btn2 == "red")
+    {
+      game_state.board_state[game_state.clicked_list[0].gy][game_state.clicked_list[0].gx] = 0
+      game_state.board_state[game_state.clicked_list[1].gy][game_state.clicked_list[1].gx] = "blue"
+    }
   }
 
   game_state.board_clicked_state = [
@@ -153,16 +201,20 @@ function enter_victory_state()
 
 // DRAWING
 
-function draw_ok_button(ctx)
+function draw_option_button(ctx, str, x, y)
 {
-  var gradient=ctx.createLinearGradient(100,210,100,330);
+  x = x || 100
+  y = y || 210
+
+  var gradient=ctx.createLinearGradient(x,y,x,y+120);
   gradient.addColorStop("0","yellow");
   gradient.addColorStop("0.5","green");
   gradient.addColorStop("1.0","darkgreen");
   ctx.fillStyle=gradient;
-  roundRect(ctx, 100, 210, 120, 30, 5, true, false)
+  roundRect(ctx, x, y, 120, 30, 5, true, false)
   ctx.fillStyle="#000000";
-  ctx.fillText("OK", 146, 231);
+  var w = ctx.measureText(str).width
+  ctx.fillText(str, x + 120 / 2 - w / 2, y + 21);
 }
 
 function draw_button(ctx,gx,gy,style)
@@ -233,6 +285,7 @@ function next_level_button(e)
   }
 }
 
+
 function step(timestamp)
 {
   game_state.ctx.fillStyle="#000000";
@@ -260,6 +313,11 @@ function step(timestamp)
     }
   }
 
+  if (game_state.name === "board")
+  {
+    draw_option_button(game_state.ctx, "Retry", 0, 465)
+  }
+
   if (game_state.name === "board_clicked")
   {
     enter_board_state();
@@ -272,7 +330,7 @@ function step(timestamp)
     var wait = 1.2;
     if (amt > wait)
     {
-      draw_ok_button(game_state.ctx);
+      draw_option_button(game_state.ctx, "OK");
       game_state.click_listener = next_level_button
     }
 
@@ -337,3 +395,4 @@ function reset_board_state() {
   game_state.clicked_list = []
   game_state.clicked = {gx:-1, gy:-1}
 }
+
