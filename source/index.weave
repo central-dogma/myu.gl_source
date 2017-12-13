@@ -135,8 +135,8 @@ center_page "game", "みゅみゅ | ゲーム" do
 		a "ブログ", href: "/blog"
 	end
 
-	h5 "Click on the green button to win."
-	h5 "緑のボタンを押せばレベルクリアー。"
+	h5 "Miyu's button game"
+	h5 "未夕のボタンゲーム"
 
 	canvas "アレ...? ゲームはここにあるはず。ブラウザーは古いの？", 
 		id: "game_canvas", 

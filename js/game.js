@@ -5,6 +5,8 @@ var game_state = {
   ctx: undefined,
   level: 0,
 
+  shift: 40,
+
   clicked_place: {x:0, y:0},
   clicked: {gx:0,gy:0},
   click_listener: function(){},
@@ -46,25 +48,51 @@ var styles = {
   white: ["white", "lightgray", "lightgray"],
   white_clicked: ["gray", "lightgray", "lightgray"],
 
+  ded: ["darkgray", "gray", "gray"],
+  ded_clicked: ["black", "gray", "gray"],
+
+  black: ["darkgray", "black", "black"],
+  black_clicked: ["black", "black", "darkgray"],
+
   fluorescent: ["magenta", "blue", "red"],
   fluorescent_clicked: ["red", "blue", "magenta"]
 }
 
+function fill_dead()
+{
+    var i,j;
+    var max = 4;
+    if (game_state.shift == 40)
+    {
+      max = 3
+    }
+    for(i=0;i<max;i++)
+    for(j=0;j<5;j++)
+    {
+      game_state.board_state[j][i] = "ded"
+    }
+}
+
 var levels = [
   function level0() {
-    game_state.board_state[0][0] = "green"
+    game_state.shift = 40
+    game_state.board_state[2][1] = "green"
 
   },
 
   function level1() {
-    game_state.board_state[0][0] = "red"
-    game_state.board_state[0][1] = "blue"
+    game_state.shift = 0
+
+    game_state.board_state[2][2] = "red"
+    game_state.board_state[2][1] = "blue"
   },
 
   function level2() {
-    game_state.board_state[0][0] = "blue"
-    game_state.board_state[0][1] = "blue"
-    game_state.board_state[0][2] = "blue"
+    game_state.shift = 40
+
+    game_state.board_state[2][0] = "blue"
+    game_state.board_state[2][1] = "blue"
+    game_state.board_state[2][2] = "blue"
   },
 
 ]
@@ -220,14 +248,14 @@ function draw_option_button(ctx, str, x, y)
 function draw_button(ctx,gx,gy,style)
 {
   style = style || "fluorescent"
-  var gradient=ctx.createLinearGradient(gx*80,gy*80,gx*80,gy*80+70);
+  var gradient=ctx.createLinearGradient(gx*80+game_state.shift,gy*80,gx*80+game_state.shift,gy*80+70);
   gradient.addColorStop("0",styles[style][0]);
   gradient.addColorStop("0.5",styles[style][1]);
   gradient.addColorStop("1.0",styles[style][2]);
   // Fill with gradient
   ctx.fillStyle=gradient;
 
-  roundRect(ctx, gx*80 + 5, gy*80 + 5, 70, 70, 10, true, false);
+  roundRect(ctx, gx*80 + 5+game_state.shift, gy*80 + 5, 70, 70, 10, true, false);
 }
 
 function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
@@ -365,8 +393,8 @@ function step(timestamp)
 
 function process_click(e)
 {
-  game_state.clicked.gx = Math.floor(e.offsetX/80);
-  game_state.clicked.gy = Math.floor(e.offsetY/80);
+  game_state.clicked.gx = Math.floor((e.offsetX - game_state.shift)/80);
+  game_state.clicked.gy = Math.floor((e.offsetY)/80);
   game_state.clicked_place.x = e.offsetX;
   game_state.clicked_place.y = e.offsetY;
   setTimeout(game_state.click_listener(), 0);
@@ -394,5 +422,7 @@ function reset_board_state() {
 
   game_state.clicked_list = []
   game_state.clicked = {gx:-1, gy:-1}
+
+  game_state.shift = 0;
 }
 
